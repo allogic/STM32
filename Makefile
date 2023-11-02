@@ -15,20 +15,19 @@ SRCS = $(wildcard $(SRC_DIR)/*.c)
 
 OBJS = $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRCS))
 
-OUTPUT_BIN = $(BUILD_DIR)/output.bin
+TARGET = $(BUILD_DIR)/output.elf
 
 $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(OUTPUT_BIN): $(OBJS) linker_script.ld
-	$(LD) $(LDFLAGS) -o $(OUTPUT_BIN) $(OBJS)
-	$(OBJCOPY) -O binary $(OUTPUT_BIN) $(OUTPUT_BIN)
+$(TARGET): $(OBJS) linker_script.ld
+	$(LD) $(LDFLAGS) -o $(TARGET) $(OBJS)
 
-all: $(OUTPUT_BIN)
+all: $(TARGET)
 
-load: $(OUTPUT_BIN)
-	$(OOCD) -f /ucrt64/share/openocd/scripts/board/stm32f4discovery.cfg  -c "program $(OUTPUT_BIN) verify reset exit"
+load: $(TARGET)
+	$(OOCD) -f /usr/share/openocd/scripts/board/stm32f4discovery.cfg  -c "program $(TARGET) verify reset exit"
 
 clean:
 	rm -rf $(BUILD_DIR)
