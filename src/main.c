@@ -4,10 +4,10 @@
 #include <hal/clock.h>
 
 #include <delay.h>
-#include <terminal.h>
+#include <term.h>
 
 int main(void) {
-	terminal_init();
+	term_init();
 
 	clock_enable_gpio(GPIOD);
 

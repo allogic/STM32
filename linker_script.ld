@@ -47,9 +47,11 @@ SECTIONS
 
 	.bss :
 	{
+		__bss_start__ = .;
 		*(.bss)
 		*(.bss*)
 		. = ALIGN(4);
 		FILL(0)
+		__bss_end__ = .;
 	} > RAM
 }

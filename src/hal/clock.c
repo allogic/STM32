@@ -26,6 +26,9 @@ void clock_reset(void) {
 }
 
 void clock_init_hsi_16mhz(void) {
+	RCC->CR |= RCC_CR_HSION;
+	while ((RCC->CR & RCC_CR_HSIRDY) == 0);
+
 	FLASH->ACR |= FLASH_ACR_DCEN | FLASH_ACR_ICEN | FLASH_ACR_PRFTEN | FLASH_LATENCY_0WS;
 
 	s_sys_clk_freq = HSI_FREQ;
@@ -68,11 +71,6 @@ void clock_init_hse_8mhz(void) {
 }
 
 void clock_init_pll_168mhz(void) {
-	uint32_t pllm = 8;
-	uint32_t plln = 336;
-	uint32_t pllp = 2;
-	uint32_t pllq = 4;
-
 	RCC->CR |= RCC_CR_HSEON;
 	while ((RCC->CR & RCC_CR_HSERDY) == 0);
 
@@ -90,16 +88,16 @@ void clock_init_pll_168mhz(void) {
 	RCC->CFGR |= RCC_CFGR_PPRE2_DIV2;
 
 	RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLM_MASK;
-	RCC->PLLCFGR |= (pllm << RCC_PLLCFGR_PLLM_POS);
+	RCC->PLLCFGR |= (8 << RCC_PLLCFGR_PLLM_POS);
 
 	RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLN_MASK;
-	RCC->PLLCFGR |= (plln << RCC_PLLCFGR_PLLN_POS);
+	RCC->PLLCFGR |= (336 << RCC_PLLCFGR_PLLN_POS);
 
 	RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLP_MASK;
-	RCC->PLLCFGR |= (pllp << RCC_PLLCFGR_PLLP_POS);
+	RCC->PLLCFGR |= (0 << RCC_PLLCFGR_PLLP_POS);
 
 	RCC->PLLCFGR &= ~RCC_PLLCFGR_PLLQ_MASK;
-	RCC->PLLCFGR |= (pllq << RCC_PLLCFGR_PLLQ_POS);
+	RCC->PLLCFGR |= (4 << RCC_PLLCFGR_PLLQ_POS);
 
 	RCC->PLLCFGR |= RCC_PLLCFGR_PLLSRC;
 
@@ -112,7 +110,7 @@ void clock_init_pll_168mhz(void) {
 	RCC->CFGR |= RCC_CFGR_SW_PLL;
 	while ((RCC->CFGR & RCC_CFGR_SWS_MASK) != RCC_CFGR_SWS_PLL);
 
-	s_sys_clk_freq = (HSE_FREQ * (plln / pllm)) / pllp;
+	s_sys_clk_freq = (HSE_FREQ * (336 / 8)) / 2;
 	s_ahb_clk_freq = s_sys_clk_freq / 1;
 	s_apb1_clk_freq = s_sys_clk_freq / 4;
 	s_apb2_clk_freq = s_sys_clk_freq / 2;

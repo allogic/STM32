@@ -10,16 +10,18 @@ CFLAGS += -mcpu=cortex-m4
 CFLAGS += -march=armv7e-m
 CFLAGS += -mthumb
 CFLAGS += -g
+CFLAGS += -O0
 CFLAGS += -std=c99
 CFLAGS += -Wall
 CFLAGS += -Wextra
 CFLAGS += -Wno-shift-count-overflow
 CFLAGS += -Wno-tautological-compare
 CFLAGS += -Isrc
+CFLAGS += -DPRINTF_INCLUDE_CONFIG_H
 
 LDFLAGS += -T linker_script.ld
 LDFLAGS += -Wl,-Map=$@.map
-LDFLAGS += -nostdlib
+LDFLAGS += --specs=nosys.specs
 
 GDBFLAGS += --eval-command="target extended-remote localhost:3333"
 GDBFLAGS += --eval-command="set listsize 30"

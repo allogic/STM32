@@ -39,20 +39,15 @@ void* const g_rovector[16] SECTION(".rovector") = {
 
 void* g_vector[97] SECTION(".vector");
 
-void reset_handler(void) {
+OPTIMIZE("-O0") void reset_handler(void) {
 	for (uint32_t i = 0; i < 97; ++i) {
-		if (i < 16) {
-			g_vector[i] = g_rovector[i];
-		} else {
-			g_vector[i] = 0;
-		}
+		g_vector[i] = (i < 16) ? g_rovector[i] : 0;
 	}
 
 	SCB->VTOR = (uint32_t)&g_ram;
 	SCB->CPACR |= (FPU_FULL_ACCESS << FPU_CPACR_CP10_POS) | (FPU_FULL_ACCESS << FPU_CPACR_CP11_POS);
 
 	clock_reset();
-	//clock_init_hse_8mhz();
 	clock_init_pll_168mhz();
 
 	main();

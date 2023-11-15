@@ -3,5 +3,6 @@
 
 #define PACKED __attribute__((packed))
 #define SECTION(NAME) __attribute__((section(NAME)))
+#define OPTIMIZE(NAME) __attribute__((optimize(NAME)))
 
 #endif
