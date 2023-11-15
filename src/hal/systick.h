@@ -1,0 +1,8 @@
+#ifndef STM32F4_HAL_SYSTICK_H
+#define STM32F4_HAL_SYSTICK_H
+
+#define SYSTICK_CTRL_ENABLE    (1 << 0)
+#define SYSTICK_CTRL_TICKINT   (1 << 1)
+#define SYSTICK_CTRL_CLKSOURCE (1 << 2)
+
+#endif
