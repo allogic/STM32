@@ -27,7 +27,7 @@
 #define TERM_CSI_HOME TERM_CSI "7~"
 
 #define TERM_CMD_BEGIN_TABLE command_t g_commands[] = {
-#define tERM_CMD_TABLE_ENTRY(CMD, DELEGATE)
+#define TERM_CMD_TABLE_ENTRY(CMD, DELEGATE)
 #define TERM_CMD_END_TABLE }; const uint32_t g_commands_cnt = sizeof(g_commands) / sizeof(g_commands[0]);
 
 typedef struct {
