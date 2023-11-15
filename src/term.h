@@ -26,14 +26,14 @@
 #define TERM_CSI_PGDN TERM_CSI "6~"
 #define TERM_CSI_HOME TERM_CSI "7~"
 
-#define TERM_CMD_BEGIN_TABLE command_t g_commands[] = {
+#define TERM_CMD_BEGIN_TABLE cmd_t g_commands[] = {
 #define TERM_CMD_TABLE_ENTRY(CMD, DELEGATE)
-#define TERM_CMD_END_TABLE }; const uint32_t g_commands_cnt = sizeof(g_commands) / sizeof(g_commands[0]);
+#define TERM_CMD_END_TABLE }; const uint32_t g_command_cnt = sizeof(g_commands) / sizeof(g_commands[0]);
 
 typedef struct {
 	uint8_t command[TERM_CMD_BUFFER_SIZE];
 	void (*delegate)(uint32_t argc, char** argv);
-} command_t;
+} cmd_t;
 
 void term_init(void);
 
