@@ -7,18 +7,18 @@
 
 typedef volatile struct PACKED {
 	uint32_t ISER[8];
-    uint32_t RESERVED0[24];
-    uint32_t ICER[8];
-    uint32_t RESERVED1[24];
-    uint32_t ISPR[8];
-    uint32_t RESERVED2[24];
-    uint32_t ICPR[8];
-    uint32_t RESERVED3[24];
-    uint32_t IABR[8];
-    uint32_t RESERVED4[56];
-    uint8_t IP[60];
-    uint32_t RESERVED5[644];
-    uint32_t STIR;
+	uint32_t RESERVED0[24];
+	uint32_t ICER[8];
+	uint32_t RESERVED1[24];
+	uint32_t ISPR[8];
+	uint32_t RESERVED2[24];
+	uint32_t ICPR[8];
+	uint32_t RESERVED3[24];
+	uint32_t IABR[8];
+	uint32_t RESERVED4[56];
+	uint8_t IP[60];
+	uint32_t RESERVED5[644];
+	uint32_t STIR;
 } nvic_t;
 
 typedef volatile struct PACKED {
@@ -93,27 +93,27 @@ typedef volatile struct PACKED {
 } systick_t;
 
 typedef volatile struct PACKED {
-  uint32_t CPUID;
-  uint32_t ICSR;
-  uint32_t VTOR;
-  uint32_t AIRCR;
-  uint32_t SCR;
-  uint32_t CCR;
-  uint8_t  SHP[12];
-  uint32_t SHCSR;
-  uint32_t CFSR;
-  uint32_t HFSR;
-  uint32_t DFSR;
-  uint32_t MMFAR;
-  uint32_t BFAR;
-  uint32_t AFSR;
-  uint32_t PFR[2];
-  uint32_t DFR;
-  uint32_t ADR;
-  uint32_t MMFR[4];
-  uint32_t ISAR[5];
-  uint32_t RESERVED0[5];
-  uint32_t CPACR;
+	uint32_t CPUID;
+	uint32_t ICSR;
+	uint32_t VTOR;
+	uint32_t AIRCR;
+	uint32_t SCR;
+	uint32_t CCR;
+	uint8_t  SHP[12];
+	uint32_t SHCSR;
+	uint32_t CFSR;
+	uint32_t HFSR;
+	uint32_t DFSR;
+	uint32_t MMFAR;
+	uint32_t BFAR;
+	uint32_t AFSR;
+	uint32_t PFR[2];
+	uint32_t DFR;
+	uint32_t ADR;
+	uint32_t MMFR[4];
+	uint32_t ISAR[5];
+	uint32_t RESERVED0[5];
+	uint32_t CPACR;
 } scb_t;
 
 typedef volatile struct PACKED {

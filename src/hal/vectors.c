@@ -61,15 +61,15 @@ void reset_handler(void) {
 }
 
 void vectors_register_isr(uint32_t position, void (*isr)(void)) {
-    g_vector[16 + position] = isr;
+	g_vector[16 + position] = isr;
 }
 
 void vectors_enable_irq(uint8_t channel) {
-    NVIC->ISER[channel >> 5] = 1 << (channel & 0x1F);
+	NVIC->ISER[channel >> 5] = 1 << (channel & 0x1F);
 }
 
 void vectors_disable_irq(uint8_t channel) {
-    NVIC->ICER[channel >> 5] = 1 << (channel & 0x1F);
+	NVIC->ICER[channel >> 5] = 1 << (channel & 0x1F);
 }
 
 static void hardfault_handler(void) {
