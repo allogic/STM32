@@ -1,5 +1,4 @@
 #include <core/attributes.h>
-#include <core/macros.h>
 
 #include <hal/registers.h>
 #include <hal/peripherals.h>
@@ -17,7 +16,8 @@ typedef enum {
     ANSI_STATE_BRACKET,
     ANSI_STATE_NUMERIC,
 	ANSI_STATE_ALPHANUMERIC,
-    ANSI_STATE_SEMICOLON
+    ANSI_STATE_SEMICOLON,
+	ANSI_STATE_COMMAND,
 } ansi_state_t;
 
 static ansi_state_t s_ansi_state = ANSI_STATE_INIT;
@@ -36,8 +36,14 @@ static bool term_byte_is_printable(uint8_t byte);
 static bool term_byte_is_numeric(uint8_t byte);
 static bool term_byte_is_alphanumeric(uint8_t byte);
 
-static void term_move_cursor_back(void);
-static void term_move_cursor_forward(void);
+static void term_handle_return(void);
+static void term_handle_backspace(void);
+static void term_handle_write_byte(uint8_t byte);
+
+static void term_move_cursor_left(void);
+static void term_move_cursor_right(void);
+//static void term_move_cursor_to_next_space_left(void);
+//static void term_move_cursor_to_next_space_right(void);
 
 static void term_select_prev_cmd(void);
 static void term_select_next_cmd(void);
@@ -86,36 +92,99 @@ static void term_init_usart(void) {
 }
 
 static bool term_byte_is_ctrl_code(uint8_t byte) {
-	return byte < TERM_CHAR_SPACE;
+	return byte < ' ';
 }
 
 static bool term_byte_is_printable(uint8_t byte) {
-	return (byte >= TERM_CHAR_SPACE) && (byte < TERM_CHAR_DEL);
+	return (byte >= ' ') && (byte <= '~');
 }
 
 static bool term_byte_is_numeric(uint8_t byte) {
-	return (byte >= TERM_CHAR_0) && (byte <= TERM_CHAR_9);
+	return (byte >= '0') && (byte <= '9');
 }
 
 static bool term_byte_is_alphanumeric(uint8_t byte) {
-	return (((byte >= TERM_CHAR_AU) && (byte <= TERM_CHAR_ZU)) || ((byte >= TERM_CHAR_AL) && (byte <= TERM_CHAR_ZL)));
+	return (((byte >= 'A') && (byte <= 'Z')) || ((byte >= 'a') && (byte <= 'z')));
 }
 
-static void term_move_cursor_back(void) {
+static void term_handle_return(void) {
+	s_cursor_pos = 0;
+	s_line_length = 0;
+
+	printf("\r\n");
+
+	term_exec_buffer();
+
+	memset(s_line_buffer, 0, TERM_LINE_BUFFER_SIZE);
+}
+
+static void term_handle_backspace(void) {
+	if (s_cursor_pos > 0) {
+		s_cursor_pos--;
+		s_line_length--;
+
+		for (uint32_t i = s_cursor_pos; i < (TERM_LINE_BUFFER_SIZE - 1); ++i) {
+			s_line_buffer[i] = s_line_buffer[i + 1];
+		}
+
+		printf(TERM_MOVE_CURSOR_LEFT);
+		printf(TERM_STORE_CURSOR_POS);
+		printf(TERM_ERASE_FROM_CURSOR_TO_EOL);
+		printf("%s", s_line_buffer + s_cursor_pos);
+		printf(TERM_RESTORE_CURSOR_POS);
+	}
+}
+
+static void term_handle_write_byte(uint8_t byte) {
+	if (s_line_length < (TERM_LINE_BUFFER_SIZE - 1)) {
+		for (uint32_t i = (TERM_LINE_BUFFER_SIZE - 1); i > s_cursor_pos; --i) {
+			s_line_buffer[i] = s_line_buffer[i - 1];
+		}
+
+		s_line_buffer[s_cursor_pos] = byte;
+
+		s_cursor_pos++;
+		s_line_length++;
+
+		printf("%c", byte);
+		printf(TERM_STORE_CURSOR_POS);
+		printf(TERM_ERASE_FROM_CURSOR_TO_EOL);
+		printf("%s", s_line_buffer + s_cursor_pos);
+		printf(TERM_RESTORE_CURSOR_POS);
+	}
+}
+
+static void term_move_cursor_left(void) {
 	if ((s_cursor_pos > 0) && (s_cursor_pos <= s_line_length)) {
 		s_cursor_pos--;
-
-		printf(TERM_MOVE_CURSOR_BACK);
+		printf(TERM_MOVE_CURSOR_LEFT);
 	}
 }
 
-static void term_move_cursor_forward(void) {
+static void term_move_cursor_right(void) {
 	if (s_cursor_pos < s_line_length) {
 		s_cursor_pos++;
-
-		printf(TERM_MOVE_CURSOR_FORWARD);
+		printf(TERM_MOVE_CURSOR_RIGHT);
 	}
 }
+
+/*
+static void term_move_cursor_to_next_space_left(void) {
+	uint32_t i = s_cursor_pos;
+	while ((s_line_buffer[i] != TERM_CHAR_SPACE) && (s_line_buffer[i] != 0)) {
+		i--;
+	}
+	printf(TERM_ESC TERM_CSI "%uG", i);
+}
+
+static void term_move_cursor_to_next_space_right(void) {
+	uint32_t i = s_cursor_pos;
+	while ((s_line_buffer[i] != TERM_CHAR_SPACE) && (s_line_buffer[i] != 0)) {
+		i++;
+	}
+	printf(TERM_ESC TERM_CSI "%uG", i);
+}
+*/
 
 static void term_select_prev_cmd(void) {
 
@@ -128,54 +197,20 @@ static void term_select_next_cmd(void) {
 static void term_handle_ansi(uint8_t byte) {
 	switch (s_ansi_state) {
 		case ANSI_STATE_INIT: {
-			if (byte == TERM_CHAR_ESC) {
+			if (byte == TERM_CTRL_ESC) {
 				s_ansi_state = ANSI_STATE_ESCAPE;
-			} else if (byte == TERM_CHAR_CR) {
-				s_cursor_pos = 0;
-				s_line_length = 0;
-	
-				printf("\r\n");
-	
-				term_exec_buffer();
-			} else if (byte == TERM_CHAR_BS) {
-				if (s_cursor_pos > 0) {
-					s_cursor_pos--;
-
-					uint32_t delta = s_line_length - s_cursor_pos;
-					for (uint32_t i = 0; i < delta; ++i) {
-						s_line_buffer[s_cursor_pos + i] = s_line_buffer[s_cursor_pos + i + 1];
-					}
-
-					printf(TERM_MOVE_CURSOR_BACK);
-					printf(TERM_STORE_CURSOR_POS);
-					printf(TERM_ERASE_FROM_CURSOR_TO_EOL);
-					printf("%s", s_line_buffer + s_cursor_pos);
-					printf(TERM_RESTORE_CURSOR_POS);
-				}
+			} else if (byte == TERM_CTRL_CR) {
+				term_handle_return();
+			} else if (byte == TERM_CTRL_BS) {
+				term_handle_backspace();
 			} else if (term_byte_is_printable(byte)) {
-				if (s_line_length < (TERM_LINE_BUFFER_SIZE - 1)) {
-					s_line_buffer[s_cursor_pos] = byte;
-
-					s_cursor_pos++;
-					s_line_length = MAX(s_line_length, s_cursor_pos);
-
-					uint32_t delta = s_line_length - s_cursor_pos;
-					for (uint32_t i = delta; i >= 0; --i) {
-						s_line_buffer[s_cursor_pos + i + 1] = s_line_buffer[s_cursor_pos + i];
-					}
-
-					printf("%c", byte);
-					printf(TERM_STORE_CURSOR_POS);
-					//printf(TERM_ERASE_FROM_CURSOR_TO_EOL);
-					printf("%s", s_line_buffer + s_cursor_pos);
-					printf(TERM_RESTORE_CURSOR_POS);
-				}
+				term_handle_write_byte(byte);
 			}
 
 			break;
 		}
 		case ANSI_STATE_ESCAPE: {
-			if (byte == TERM_CHAR_LSQBR) {
+			if (byte == '[') {
 				s_ansi_state = ANSI_STATE_BRACKET;
 			} else {
 				s_ansi_state = ANSI_STATE_INIT;
@@ -187,13 +222,13 @@ static void term_handle_ansi(uint8_t byte) {
 			if (term_byte_is_numeric(byte)) {
 				s_ansi_state = ANSI_STATE_NUMERIC;
 			} else if (term_byte_is_alphanumeric(byte)) {
-				if (byte == TERM_CHAR_DU) {
-					term_move_cursor_back();
-				} else if (byte == TERM_CHAR_CU) {
-					term_move_cursor_forward();
-				} else if (byte == TERM_CHAR_AU) {
+				if (byte == 'D') {
+					term_move_cursor_left();
+				} else if (byte == 'C') {
+					term_move_cursor_right();
+				} else if (byte == 'A') {
 					term_select_prev_cmd();
-				} else if (byte == TERM_CHAR_BU) {
+				} else if (byte == 'B') {
 					term_select_next_cmd();
 				}
 
@@ -205,7 +240,7 @@ static void term_handle_ansi(uint8_t byte) {
 			break;
 		}
 		case ANSI_STATE_NUMERIC: {
-			if (byte == TERM_CHAR_SEMICOLON) {
+			if (byte == ';') {
 				s_ansi_state = ANSI_STATE_SEMICOLON;
 			} else {
 				s_ansi_state = ANSI_STATE_INIT;
@@ -227,12 +262,16 @@ static void term_handle_ansi(uint8_t byte) {
 
 			break;
 		}
+		case ANSI_STATE_COMMAND: {
+			s_ansi_state = ANSI_STATE_INIT;
+
+			break;
+		}
 	}
 }
 
 static void term_exec_buffer(void) {
-	printf("EXEC LINE: [%s]\r\n", s_line_buffer);
-	memset(s_line_buffer, 0, TERM_LINE_BUFFER_SIZE);
+	
 }
 
 static void term_usart2_handler(void) {

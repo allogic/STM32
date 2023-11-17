@@ -14,6 +14,7 @@ SECTIONS
 {
 	.vector :
 	{
+		. = ALIGN(4);
 		__vector_start__ = .;
 		KEEP(*(.vector))
 		. = ALIGN(4);
@@ -24,6 +25,7 @@ SECTIONS
 
 	.text :
 	{
+		. = ALIGN(4);
 		__text_start__ = .;
 		*(.text)
 		*(.text*)
@@ -36,6 +38,7 @@ SECTIONS
 
 	.data :
 	{
+		. = ALIGN(4);
 		__data_start__ = .;
 		*(.data)
 		*(.data*)
@@ -47,6 +50,7 @@ SECTIONS
 
 	.bss :
 	{
+		. = ALIGN(4);
 		__bss_start__ = .;
 		*(.bss)
 		*(.bss*)
