@@ -9,6 +9,7 @@ OOCD_CFG = board/stm32f4discovery.cfg
 CFLAGS += -mcpu=cortex-m4
 CFLAGS += -march=armv7e-m
 CFLAGS += -mthumb
+CFLAGS += -c
 CFLAGS += -g
 CFLAGS += -O0
 CFLAGS += -std=c99
@@ -19,6 +20,7 @@ CFLAGS += -Wno-tautological-compare
 CFLAGS += -Isrc
 CFLAGS += -DPRINTF_INCLUDE_CONFIG_H
 
+LDFLAGS += -mthumb
 LDFLAGS += -T linker_script.ld
 LDFLAGS += -Wl,-Map=$@.map
 LDFLAGS += --specs=nosys.specs
@@ -44,6 +46,7 @@ $(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
 
 $(TARGET): $(OBJS) linker_script.ld
 	$(LD) $(LDFLAGS) -o $(TARGET).elf $(OBJS)
+	$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin
 
 all: $(TARGET)
 

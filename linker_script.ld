@@ -4,46 +4,46 @@ MEMORY
 	RAM   (rwx) : ORIGIN = 0x20000000, LENGTH = 64K
 }
 
-g_flash = ORIGIN(FLASH);
-g_ram = ORIGIN(RAM);
-g_stack = ORIGIN(RAM) + LENGTH(RAM);
+__flash__ = ORIGIN(FLASH);
+__ram__   = ORIGIN(RAM);
+__stack__ = ORIGIN(RAM) + LENGTH(RAM);
 
 ENTRY(reset_handler)
 
 SECTIONS
 {
-	.rovector :
-	{
-		KEEP(*(.rovector))
-		. = ALIGN(4);
-	} > FLASH
-
 	.vector :
 	{
+		__vector_start__ = .;
 		KEEP(*(.vector))
 		. = ALIGN(4);
+		__vector_end__ = .;
 	} > RAM AT > FLASH
+
+	__vector_init__ = LOADADDR(.vector);
 
 	.text :
 	{
+		__text_start__ = .;
 		*(.text)
 		*(.text*)
 		. = ALIGN(4);
-	} > FLASH
-
-	.rodata :
-	{
 		*(.rodata)
 		*(.rodata*)
 		. = ALIGN(4);
+		__text_end__ = .;
 	} > FLASH
 
 	.data :
 	{
+		__data_start__ = .;
 		*(.data)
 		*(.data*)
 		. = ALIGN(4);
+		__data_end__ = .;
 	} > RAM AT > FLASH
+
+	__data_init__ = LOADADDR(.data);
 
 	.bss :
 	{
@@ -51,7 +51,6 @@ SECTIONS
 		*(.bss)
 		*(.bss*)
 		. = ALIGN(4);
-		FILL(0)
 		__bss_end__ = .;
 	} > RAM
 }

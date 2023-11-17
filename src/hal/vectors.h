@@ -1,6 +1,7 @@
 #ifndef STM32F4_HAL_VECTORS_H
 #define STM32F4_HAL_VECTORS_H
 
+#include <string.h>
 #include <stdint.h>
 
 extern uint32_t g_sys_ticks;
