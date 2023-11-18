@@ -1,5 +1,5 @@
-#ifndef STM32F4_CORE_MACROS_H
-#define STM32F4_CORE_MACROS_H
+#ifndef LIB_CORE_MACROS_H
+#define LIB_CORE_MACROS_H
 
 #define UNUSED(X) ((void)X)
 

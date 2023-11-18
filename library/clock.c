@@ -3,7 +3,8 @@
 #include <hal/flash.h>
 #include <hal/pwr.h>
 #include <hal/systick.h>
-#include <hal/clock.h>
+
+#include <clock.h>
 
 static uint32_t s_sys_clk_freq;
 static uint32_t s_ahb_clk_freq;

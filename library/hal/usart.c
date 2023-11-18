@@ -1,5 +1,6 @@
-#include <hal/clock.h>
 #include <hal/usart.h>
+
+#include <clock.h>
 
 void usart_set_baudrate(usart_t* usart, uint32_t baud) {
 	uint32_t clock = clock_get_usart_clk_freq(usart);
@@ -54,20 +55,12 @@ void usart_disable(usart_t* usart) {
 	usart->CR1 &= ~USART_CR1_UE;
 }
 
-void usart_send(usart_t* usart, uint8_t value) {
-	usart->DR = value;
-}
-
-void usart_send_blocking(usart_t* usart, uint8_t value) {
+void usart_send(usart_t* usart, uint8_t data) {
 	while ((usart->SR & USART_SR_TXE) == 0);
-	usart->DR = value;
+	usart->DR = data;
 }
 
 uint8_t usart_recv(usart_t* usart) {
-	return usart->DR & USART_DR_MASK;
-}
-
-uint8_t usart_recv_blocking(usart_t* usart) {
 	while ((usart->SR & USART_SR_RXNE) == 0);
-	return usart->DR & USART_DR_MASK;
+	return usart->DR;
 }

@@ -2,11 +2,11 @@
 
 #include <hal/registers.h>
 #include <hal/peripherals.h>
-#include <hal/clock.h>
 #include <hal/usart.h>
 #include <hal/gpio.h>
-#include <hal/vectors.h>
 
+#include <clock.h>
+#include <vectors.h>
 #include <term.h>
 #include <printf.h>
 
@@ -23,27 +23,27 @@ static bool term_byte_is_printable(uint8_t byte);
 
 static void term_handle_return(void);
 static void term_handle_backspace(void);
-static void term_handle_write_byte(uint8_t byte);
+static void term_handle_print(uint8_t byte);
 
 static void term_handle_byte(uint8_t byte);
 static void term_exec_buffer(void);
 
 static void term_usart2_handler(void);
 
+void _putchar(char byte) {
+	usart_send(USART2, byte);
+}
+
 void term_init(void) {
 	term_init_gpio();
 	term_init_usart();
 }
 
-void _putchar(char byte) {
-	usart_send_blocking(USART2, byte);
-}
-
 static void term_init_gpio(void) {
 	clock_enable_gpio(GPIOA);
 
-	gpio_set_mode(GPIOA, 2, GPIO_MODE_AF);
-	gpio_set_mode(GPIOA, 3, GPIO_MODE_AF);
+	gpio_set_mode(GPIOA, 2, GPIO_MODE_AF); // TX
+	gpio_set_mode(GPIOA, 3, GPIO_MODE_AF); // RX
 
 	gpio_set_output_type(GPIOA, 3, GPIO_OUTPUT_OD);
 	gpio_set_output_speed(GPIOA, 3, GPIO_SPEED_HIGH);
@@ -92,7 +92,7 @@ static void term_handle_backspace(void) {
 	}
 }
 
-static void term_handle_write_byte(uint8_t byte) {
+static void term_handle_print(uint8_t byte) {
 	if (s_line_length < (TERM_LINE_BUFFER_SIZE - 1)) {
 		s_line_buffer[s_line_length++] = byte;
 
@@ -101,12 +101,14 @@ static void term_handle_write_byte(uint8_t byte) {
 }
 
 static void term_handle_byte(uint8_t byte) {
-	if (byte == TERM_CTRL_CR) {
-		term_handle_return();
-	} else if (byte == TERM_CTRL_BS) {
-		term_handle_backspace();
+	if (term_byte_is_ctrl_code(byte)) {
+		if (byte == TERM_CTRL_CR) {
+			term_handle_return();
+		} else if (byte == TERM_CTRL_BS) {
+			term_handle_backspace();
+		}
 	} else if (term_byte_is_printable(byte)) {
-		term_handle_write_byte(byte);
+		term_handle_print(byte);
 	}
 }
 
@@ -116,6 +118,6 @@ static void term_exec_buffer(void) {
 
 static void term_usart2_handler(void) {
 	if (USART2->SR & USART_SR_RXNE) {
-		term_handle_byte(USART2->DR & USART_DR_MASK);
+		term_handle_byte(USART2->DR & 0xFF);
 	}
 }

@@ -1,5 +1,5 @@
-#ifndef STM32F4_HAL_CLOCK_H
-#define STM32F4_HAL_CLOCK_H
+#ifndef STM32F4_CLOCK_H
+#define STM32F4_CLOCK_H
 
 #include <stdint.h>
 

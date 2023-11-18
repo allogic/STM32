@@ -1,7 +1,6 @@
 #ifndef STM32F4_HAL_GPIO_H
 #define STM32F4_HAL_GPIO_H
 
-#include <stdbool.h>
 #include <stdint.h>
 
 #include <hal/registers.h>
@@ -29,7 +28,7 @@ void gpio_set_output_speed(gpio_t* gpio, uint32_t pin, uint32_t speed);
 void gpio_set_pull(gpio_t* gpio, uint32_t pin, uint32_t pull);
 void gpio_set_af(gpio_t* gpio, uint32_t pin, uint8_t af);
 
-bool gpio_read(gpio_t* gpio, uint32_t pin);
-void gpio_write(gpio_t* gpio, uint32_t pin, bool value);
+void gpio_write(gpio_t* gpio, uint32_t pin, uint8_t data);
+uint8_t gpio_read(gpio_t* gpio, uint32_t pin);
 
 #endif

@@ -1,5 +1,5 @@
-#ifndef STM32F4_CORE_ATTRIBUTES_H
-#define STM32F4_CORE_ATTRIBUTES_H
+#ifndef LIB_CORE_ATTRIBUTES_H
+#define LIB_CORE_ATTRIBUTES_H
 
 #define PACKED         __attribute__((packed))
 #define SECTION(NAME)  __attribute__((section(NAME)))

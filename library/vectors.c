@@ -2,9 +2,10 @@
 
 #include <hal/registers.h>
 #include <hal/peripherals.h>
-#include <hal/vectors.h>
-#include <hal/clock.h>
 #include <hal/fpu.h>
+
+#include <vectors.h>
+#include <clock.h>
 
 extern uint32_t __flash__;
 extern uint32_t __ram__;

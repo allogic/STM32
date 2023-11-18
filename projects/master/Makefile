@@ -4,6 +4,10 @@ OBJCOPY = arm-none-eabi-objcopy
 GDB = gdb-multiarch
 OOCD = openocd
 
+LIB_DIR = ../../library
+PRO_DIR = .
+BUILD_DIR = ./build
+
 OOCD_CFG = board/stm32f4discovery.cfg
 
 CFLAGS += -mcpu=cortex-m4
@@ -17,11 +21,11 @@ CFLAGS += -Wall
 CFLAGS += -Wextra
 CFLAGS += -Wno-shift-count-overflow
 CFLAGS += -Wno-tautological-compare
-CFLAGS += -Isrc
-CFLAGS += -DPRINTF_INCLUDE_CONFIG_H
+CFLAGS += -I$(LIB_DIR)
+CFLAGS += -I$(PRO_DIR)
 
 LDFLAGS += -mthumb
-LDFLAGS += -T linker_script.ld
+LDFLAGS += -T $(LIB_DIR)/stm32f407.ld
 LDFLAGS += -Wl,-Map=$@.map
 LDFLAGS += --specs=nosys.specs
 
@@ -30,21 +34,25 @@ GDBFLAGS += --eval-command="set listsize 30"
 GDBFLAGS += --eval-command="set print pretty on"
 GDBFLAGS += --eval-command="set print array on"
 
-SRC_DIR = src
-BUILD_DIR = build
+LIB_SRCS += $(wildcard $(LIB_DIR)/*.c)
+LIB_SRCS += $(wildcard $(LIB_DIR)/hal/*.c)
 
-SRCS += $(wildcard $(SRC_DIR)/*.c)
-SRCS += $(wildcard $(SRC_DIR)/hal/*.c)
+PRO_SRCS += $(wildcard $(PRO_DIR)/*.c)
 
-OBJS = $(patsubst $(SRC_DIR)/%.c,$(BUILD_DIR)/%.o,$(SRCS))
+OBJS += $(patsubst $(LIB_DIR)/%.c, $(BUILD_DIR)/%.o, $(LIB_SRCS))
+OBJS += $(patsubst $(PRO_DIR)/%.c, $(BUILD_DIR)/%.o, $(PRO_SRCS))
 
 TARGET = $(BUILD_DIR)/output
 
-$(BUILD_DIR)/%.o: $(SRC_DIR)/%.c
+$(BUILD_DIR)/%.o: $(LIB_DIR)/%.c
 	@mkdir -p $(@D)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-$(TARGET): $(OBJS) linker_script.ld
+$(BUILD_DIR)/%.o: $(PRO_DIR)/%.c
+	@mkdir -p $(@D)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+$(TARGET): $(OBJS)
 	$(LD) $(LDFLAGS) -o $(TARGET).elf $(OBJS)
 	$(OBJCOPY) -O binary $(TARGET).elf $(TARGET).bin
 

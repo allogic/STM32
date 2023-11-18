@@ -8,8 +8,6 @@
 #define USART_SR_RXNE (1 << 5)
 #define USART_SR_TXE  (1 << 7)
 
-#define USART_DR_MASK (0xFF)
-
 #define USART_CR1_RE     (1 << 2)
 #define USART_CR1_TE     (1 << 3)
 #define USART_CR1_RXNEIE (1 << 5)
@@ -57,10 +55,7 @@ void usart_disable_rx_interrupt(usart_t* usart);
 void usart_enable(usart_t* usart);
 void usart_disable(usart_t* usart);
 
-void usart_send(usart_t* usart, uint8_t value);
-void usart_send_blocking(usart_t* usart, uint8_t value);
-
+void usart_send(usart_t* usart, uint8_t data);
 uint8_t usart_recv(usart_t* usart);
-uint8_t usart_recv_blocking(usart_t* usart);
 
 #endif
