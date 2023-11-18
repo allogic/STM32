@@ -5,6 +5,7 @@
 
 #include <delay.h>
 #include <term.h>
+#include <printf.h>
 
 int main(void) {
 	term_init();
@@ -39,7 +40,7 @@ int main(void) {
 
 		delay_ms(1000);
 
-		term_print("HELLO!\r\n");
+		printf("HELLO!\r\n");
 	}
 
 	return 0;
