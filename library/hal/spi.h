@@ -13,6 +13,8 @@
 #define SPI_CR1_BR2      (1 << 5)
 #define SPI_CR1_SPE      (1 << 6)
 #define SPI_CR1_LSBFIRST (1 << 7)
+#define SPI_CR1_SSI      (1 << 8)
+#define SPI_CR1_SSM      (1 << 9)
 #define SPI_CR1_RXONLY   (1 << 10)
 #define SPI_CR1_DFF      (1 << 11)
 #define SPI_CR1_CRCNEXT  (1 << 12)
@@ -25,9 +27,6 @@
 
 #define SPI_CR1_CPOL_MASK (SPI_CR1_CPOL)
 #define SPI_CR1_CPOL_POS  (1)
-
-#define SPI_CR1_MSTR_MASK (SPI_CR1_MSTR)
-#define SPI_CR1_MSTR_POS  (2)
 
 #define SPI_CR1_BR_MASK (SPI_CR1_BR0 | SPI_CR1_BR1 | SPI_CR1_BR2)
 #define SPI_CR1_BR_POS  (3)
@@ -43,9 +42,6 @@
 
 #define SPI_CLK_PHASE_0 (0 << SPI_CR1_CPOL_POS)
 #define SPI_CLK_PHASE_1 (1 << SPI_CR1_CPOL_POS)
-
-#define SPI_MODE_SLAVE  (0 << SPI_CR1_MSTR_POS)
-#define SPI_MODE_MASTER (1 << SPI_CR1_MSTR_POS)
 
 #define SPI_CLK_DIV2   (0b000 << SPI_CR1_BR_POS)
 #define SPI_CLK_DIV4   (0b001 << SPI_CR1_BR_POS)
@@ -69,7 +65,8 @@
 #define SPI_SR_RXNE (1 << 0)
 #define SPI_SR_TXE  (1 << 1)
 
-void spi_set_mode(spi_t* spi, uint32_t mode);
+void spi_set_master_mode(spi_t* spi);
+void spi_set_slave_mode(spi_t* spi);
 void spi_set_bidirectional(spi_t* spi);
 void spi_set_unidirectional(spi_t* spi);
 void spi_set_clk_prescaler(spi_t* spi, uint32_t prescaler);
@@ -79,6 +76,11 @@ void spi_set_full_duplex(spi_t* spi);
 void spi_set_receive_only(spi_t* spi);
 void spi_set_frame_format(spi_t* spi, uint32_t format);
 void spi_set_frame_size(spi_t* spi, uint32_t size);
+void spi_set_nss_high(spi_t* spi);
+void spi_set_nss_low(spi_t* spi);
+
+void spi_enable_software_slave_mgmt(spi_t* spi);
+void spi_disable_software_slave_mgmt(spi_t* spi);
 
 void spi_enable_tx_interrupt(spi_t* spi);
 void spi_enable_rx_interrupt(spi_t* spi);

@@ -39,6 +39,8 @@ int main(void) {
 	led_init();
 	intercom_init();
 
+	printf("Hello I am the master device\r\n");
+
 	while (1) {
 		gpio_write(GPIOD, 12, !gpio_read(GPIOD, 12));
 		gpio_write(GPIOD, 13, !gpio_read(GPIOD, 13));
@@ -46,6 +48,8 @@ int main(void) {
 		gpio_write(GPIOD, 15, !gpio_read(GPIOD, 15));
 
 		delay_ms(1000);
+
+		intercom_transfer();
 	}
 
 	return 0;

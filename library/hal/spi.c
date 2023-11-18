@@ -1,8 +1,13 @@
 #include <hal/spi.h>
 
-void spi_set_mode(spi_t* spi, uint32_t mode) {
-	spi->CR1 &= ~SPI_CR1_MSTR_MASK;
-	spi->CR1 |= mode;
+void spi_set_master_mode(spi_t* spi) {
+	spi->CR1 |= SPI_CR1_MSTR;
+	spi->CR2 |= SPI_CR2_SSOE;
+}
+
+void spi_set_slave_mode(spi_t* spi) {
+	spi->CR1 &= ~SPI_CR1_MSTR;
+	spi->CR2 &= ~SPI_CR2_SSOE;
 }
 
 void spi_set_bidirectional(spi_t* spi) {
@@ -44,6 +49,22 @@ void spi_set_frame_format(spi_t* spi, uint32_t format) {
 void spi_set_frame_size(spi_t* spi, uint32_t size) {
 	spi->CR2 &= ~SPI_CR1_DFF_MASK;
 	spi->CR2 |= size;
+}
+
+void spi_set_nss_high(spi_t* spi) {
+	spi->CR1 |= SPI_CR1_SSI;
+}
+
+void spi_set_nss_low(spi_t* spi) {
+	spi->CR1 &= ~SPI_CR1_SSI;
+}
+
+void spi_enable_software_slave_mgmt(spi_t* spi) {
+	spi->CR1 |= SPI_CR1_SSM;
+}
+
+void spi_disable_software_slave_mgmt(spi_t* spi) {
+	spi->CR1 &= ~SPI_CR1_SSM;
 }
 
 void spi_enable_tx_interrupt(spi_t* spi) {

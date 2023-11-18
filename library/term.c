@@ -45,9 +45,6 @@ static void term_init_gpio(void) {
 	gpio_set_mode(GPIOA, 2, GPIO_MODE_AF); // TX
 	gpio_set_mode(GPIOA, 3, GPIO_MODE_AF); // RX
 
-	gpio_set_output_type(GPIOA, 3, GPIO_OUTPUT_OD);
-	gpio_set_output_speed(GPIOA, 3, GPIO_SPEED_HIGH);
-
 	gpio_set_af(GPIOA, 2, 7);
 	gpio_set_af(GPIOA, 3, 7);
 }

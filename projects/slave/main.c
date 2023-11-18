@@ -39,6 +39,8 @@ int main(void) {
 	led_init();
 	intercom_init();
 
+	printf("Hello I am the slave device\r\n");
+
 	while (1) {
 		gpio_write(GPIOD, 12, !gpio_read(GPIOD, 12));
 		gpio_write(GPIOD, 13, !gpio_read(GPIOD, 13));

@@ -17,12 +17,14 @@ static void intercom_spi1_handler(void);
 void intercom_init(void) {
 	intercom_init_gpio();
 	intercom_init_spi();
+}
+
+void intercom_transfer(void) {
+	static uint8_t index;
 
 	gpio_write(GPIOA, 4, 0);
-	uint8_t data = spi_xfer(SPI1, 42);
+	spi_send(SPI1, index++);
 	gpio_write(GPIOA, 4, 1);
-
-	printf("Got:%X\r\n", data);
 }
 
 static void intercom_init_gpio(void) {
@@ -34,9 +36,19 @@ static void intercom_init_gpio(void) {
 	gpio_set_mode(GPIOA, 7, GPIO_MODE_AF); // MOSI
 
 	gpio_set_output_type(GPIOA, 4, GPIO_OUTPUT_PP);
+	gpio_set_output_type(GPIOA, 5, GPIO_OUTPUT_PP);
+	gpio_set_output_type(GPIOA, 6, GPIO_OUTPUT_PP);
+	gpio_set_output_type(GPIOA, 7, GPIO_OUTPUT_PP);
+
 	gpio_set_output_speed(GPIOA, 4, GPIO_SPEED_LOW);
+	gpio_set_output_speed(GPIOA, 5, GPIO_SPEED_HIGH);
+	gpio_set_output_speed(GPIOA, 6, GPIO_SPEED_HIGH);
+	gpio_set_output_speed(GPIOA, 7, GPIO_SPEED_HIGH);
 
 	gpio_set_pull(GPIOA, 4, GPIO_PULL_NONE);
+	gpio_set_pull(GPIOA, 5, GPIO_PULL_NONE);
+	gpio_set_pull(GPIOA, 6, GPIO_PULL_NONE);
+	gpio_set_pull(GPIOA, 7, GPIO_PULL_NONE);
 
 	gpio_write(GPIOA, 4, 1);
 
@@ -48,7 +60,7 @@ static void intercom_init_gpio(void) {
 static void intercom_init_spi(void) {
 	clock_enable_spi(SPI1);
 
-	spi_set_mode(SPI1, SPI_MODE_MASTER);
+	spi_set_master_mode(SPI1);
 	spi_set_clk_prescaler(SPI1, SPI_CLK_DIV64);
 	spi_set_clk_phase(SPI1, SPI_CLK_PHASE_0);
 	spi_set_clk_polarity(SPI1, SPI_CLK_POLARITY_0);
