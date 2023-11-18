@@ -56,6 +56,23 @@ static void term_usart2_handler(void);
 void term_init(void) {
 	term_init_gpio();
 	term_init_usart();
+
+	printf(TERM_CLEAR_SCREEN);
+	printf(TERM_MOVE_CURSOR_LAST_ROW);
+}
+
+void term_print(const char* format, ...) {
+	va_list args;
+
+	printf(TERM_ERASE_LINE);
+	printf(TERM_SCROLL_UP_ONE_LINE);
+	printf(TERM_MOVE_CURSOR_TO_PREV_SOL);
+
+	va_start(args, format);
+	printf(format, args);
+	va_end(args);
+
+	printf("%s", s_line_buffer);
 }
 
 void _putchar(char byte) {

@@ -138,14 +138,25 @@ void clock_enable_gpio(gpio_t* gpio) {
 
 void clock_enable_usart(usart_t* usart) {
 	switch ((uint32_t)usart) {
-		case (uint32_t)USART1: RCC->APB2ENR |= RCC_APB2ENR_USART1; break;
-		case (uint32_t)USART2: RCC->APB1ENR |= RCC_APB1ENR_USART2; break;
-		case (uint32_t)USART3: RCC->APB1ENR |= RCC_APB1ENR_USART3; break;
-		case (uint32_t)UART4:  RCC->APB1ENR |= RCC_APB1ENR_USART4; break;
-		case (uint32_t)UART5:  RCC->APB1ENR |= RCC_APB1ENR_USART5; break;
-		case (uint32_t)USART6: RCC->APB2ENR |= RCC_APB2ENR_USART6; break;
-		case (uint32_t)UART7:  RCC->APB1ENR |= RCC_APB1ENR_USART7; break;
-		case (uint32_t)UART8:  RCC->APB1ENR |= RCC_APB1ENR_USART8; break;
+		case (uint32_t)USART1: RCC->APB2ENR |= RCC_APB2ENR_USART1EN; break;
+		case (uint32_t)USART2: RCC->APB1ENR |= RCC_APB1ENR_USART2EN; break;
+		case (uint32_t)USART3: RCC->APB1ENR |= RCC_APB1ENR_USART3EN; break;
+		case (uint32_t)UART4:  RCC->APB1ENR |= RCC_APB1ENR_USART4EN; break;
+		case (uint32_t)UART5:  RCC->APB1ENR |= RCC_APB1ENR_USART5EN; break;
+		case (uint32_t)USART6: RCC->APB2ENR |= RCC_APB2ENR_USART6EN; break;
+		case (uint32_t)UART7:  RCC->APB1ENR |= RCC_APB1ENR_USART7EN; break;
+		case (uint32_t)UART8:  RCC->APB1ENR |= RCC_APB1ENR_USART8EN; break;
+	}
+}
+
+void clock_enable_spi(spi_t* spi) {
+	switch ((uint32_t)spi) {
+		case (uint32_t)SPI1: RCC->APB2ENR |= RCC_APB2ENR_SPI1EN; break;
+		case (uint32_t)SPI2: RCC->APB1ENR |= RCC_APB1ENR_SPI2EN; break;
+		case (uint32_t)SPI3: RCC->APB1ENR |= RCC_APB1ENR_SPI3EN; break;
+		case (uint32_t)SPI4: RCC->APB2ENR |= RCC_APB2ENR_SPI4EN; break;
+		case (uint32_t)SPI5: RCC->APB2ENR |= RCC_APB2ENR_SPI5EN; break;
+		case (uint32_t)SPI6: RCC->APB2ENR |= RCC_APB2ENR_SPI6EN; break;
 	}
 }
 

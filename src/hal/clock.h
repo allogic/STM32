@@ -18,6 +18,7 @@ void clock_init_pll_168mhz(void);
 
 void clock_enable_gpio(gpio_t* gpio);
 void clock_enable_usart(usart_t* usart);
+void clock_enable_spi(spi_t* spi);
 
 uint32_t clock_get_usart_clk_freq(usart_t* usart);
 

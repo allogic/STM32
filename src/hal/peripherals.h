@@ -32,4 +32,11 @@
 #define UART7  ((usart_t*)0x40007800)
 #define UART8  ((usart_t*)0x40007C00)
 
+#define SPI1 ((spi_t*)0x40013000)
+#define SPI2 ((spi_t*)0x40003800)
+#define SPI3 ((spi_t*)0x40003C00)
+#define SPI4 ((spi_t*)0x40013400)
+#define SPI5 ((spi_t*)0x40015000)
+#define SPI6 ((spi_t*)0x40015400)
+
 #endif

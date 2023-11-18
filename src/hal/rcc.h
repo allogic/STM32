@@ -120,13 +120,20 @@
 #define RCC_AHB1ENR_GPIOKEN (1 << 10)
 #define RCC_APB1ENR_PWREN   (1 << 28)
 
-#define RCC_APB2ENR_USART1 (1 << 4)
-#define RCC_APB1ENR_USART2 (1 << 17)
-#define RCC_APB1ENR_USART3 (1 << 18)
-#define RCC_APB1ENR_USART4 (1 << 19)
-#define RCC_APB1ENR_USART5 (1 << 20)
-#define RCC_APB2ENR_USART6 (1 << 5)
-#define RCC_APB1ENR_USART7 (1 << 30)
-#define RCC_APB1ENR_USART8 (1 << 31)
+#define RCC_APB1ENR_SPI2EN   (1 << 14)
+#define RCC_APB1ENR_SPI3EN   (1 << 15)
+#define RCC_APB1ENR_USART2EN (1 << 17)
+#define RCC_APB1ENR_USART3EN (1 << 18)
+#define RCC_APB1ENR_USART4EN (1 << 19)
+#define RCC_APB1ENR_USART5EN (1 << 20)
+#define RCC_APB1ENR_USART7EN (1 << 30)
+#define RCC_APB1ENR_USART8EN (1 << 31)
+
+#define RCC_APB2ENR_USART1EN (1 << 4)
+#define RCC_APB2ENR_USART6EN (1 << 5)
+#define RCC_APB2ENR_SPI1EN   (1 << 12)
+#define RCC_APB2ENR_SPI4EN   (1 << 13)
+#define RCC_APB2ENR_SPI5EN   (1 << 20)
+#define RCC_APB2ENR_SPI6EN   (1 << 21)
 
 #endif

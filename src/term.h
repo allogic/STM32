@@ -3,6 +3,7 @@
 
 #include <stdbool.h>
 #include <stdint.h>
+#include <stdarg.h>
 
 #define TERM_CTRL_NUL (0)
 #define TERM_CTRL_SOH (1)
@@ -48,12 +49,19 @@
 #define TERM_MOVE_CURSOR_UP    TERM_ESC TERM_CSI "A"
 #define TERM_MOVE_CURSOR_DOWN  TERM_ESC TERM_CSI "B"
 
+#define TERM_MOVE_CURSOR_LAST_ROW TERM_ESC TERM_CSI "999;1H"
+#define TERM_MOVE_CURSOR_TO_PREV_SOL TERM_ESC TERM_CSI "1F"
+
 #define TERM_STORE_CURSOR_POS   TERM_ESC TERM_CSI "s"
 #define TERM_RESTORE_CURSOR_POS TERM_ESC TERM_CSI "u"
 
 #define TERM_ERASE_FROM_CURSOR_TO_EOL TERM_ESC TERM_CSI "0K"
 #define TERM_ERASE_FROM_SOL_TO_CURSOR TERM_ESC TERM_CSI "1K"
 #define TERM_ERASE_LINE               TERM_ESC TERM_CSI "2K"
+
+#define TERM_CLEAR_SCREEN TERM_ESC TERM_CSI "2J"
+
+#define TERM_SCROLL_UP_ONE_LINE TERM_ESC TERM_CSI "1S"
 
 #define TERM_CMD_BEGIN_TABLE cmd_t g_commands[] = {
 #define TERM_CMD_TABLE_ENTRY(CMD, DELEGATE)
@@ -65,5 +73,6 @@ typedef struct {
 } cmd_t;
 
 void term_init(void);
+void term_print(const char* format, ...);
 
 #endif

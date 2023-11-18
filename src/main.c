@@ -38,6 +38,8 @@ int main(void) {
 		gpio_write(GPIOD, 15, !gpio_read(GPIOD, 15));
 
 		delay_ms(1000);
+
+		term_print("HELLO!\r\n");
 	}
 
 	return 0;

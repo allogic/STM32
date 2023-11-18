@@ -126,4 +126,16 @@ typedef volatile struct PACKED {
 	uint32_t GTPR;
 } usart_t;
 
+typedef volatile struct PACKED {
+	uint32_t CR1;
+	uint32_t CR2;
+	uint32_t SR;
+	uint32_t DR;
+	uint32_t CRCPR;
+	uint32_t RXCRCR;
+	uint32_t TXCRCR;
+	uint32_t I2SCfGR;
+	uint32_t I2SPR;
+} spi_t;
+
 #endif
