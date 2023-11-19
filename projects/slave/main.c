@@ -48,6 +48,8 @@ int main(void) {
 		gpio_write(GPIOD, 15, !gpio_read(GPIOD, 15));
 
 		delay_ms(1000);
+
+		intercom_transfer();
 	}
 
 	return 0;

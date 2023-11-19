@@ -62,8 +62,15 @@
 #define SPI_CR2_RXNEIE (1 << 6)
 #define SPI_CR2_TXEIE  (1 << 7)
 
-#define SPI_SR_RXNE (1 << 0)
-#define SPI_SR_TXE  (1 << 1)
+#define SPI_SR_RXNE   (1 << 0)
+#define SPI_SR_TXE    (1 << 1)
+#define SPI_SR_CHSIDE (1 << 2)
+#define SPI_SR_UDR    (1 << 3)
+#define SPI_SR_CRCERR (1 << 4)
+#define SPI_SR_MODF   (1 << 5)
+#define SPI_SR_OVR    (1 << 6)
+#define SPI_SR_BSY    (1 << 7)
+#define SPI_SR_FRE    (1 << 8)
 
 void spi_set_master_mode(spi_t* spi);
 void spi_set_slave_mode(spi_t* spi);
@@ -95,6 +102,7 @@ void spi_enable(spi_t* spi);
 void spi_disable(spi_t* spi);
 
 void spi_write(spi_t* spi, uint16_t data);
+uint16_t spi_read(spi_t* spi);
 
 void spi_send(spi_t* spi, uint16_t data);
 uint16_t spi_recv(spi_t* spi);

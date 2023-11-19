@@ -103,6 +103,10 @@ void spi_write(spi_t* spi, uint16_t data) {
 	spi->DR = data;
 }
 
+uint16_t spi_read(spi_t* spi) {
+	return spi->DR & 0xFFFF;
+}
+
 void spi_send(spi_t* spi, uint16_t data) {
 	while ((spi->SR & SPI_SR_TXE) == 0);
 	spi->DR = data;
@@ -110,11 +114,12 @@ void spi_send(spi_t* spi, uint16_t data) {
 
 uint16_t spi_recv(spi_t* spi) {
 	while ((spi->SR & SPI_SR_RXNE) == 0);
-	return spi->DR;
+	return spi->DR & 0xFFFF;
 }
 
 uint16_t spi_xfer(spi_t* spi, uint16_t data) {
+	while ((spi->SR & SPI_SR_TXE) == 0);
 	spi->DR = data;
 	while ((spi->SR & SPI_SR_RXNE) == 0);
-	return spi->DR;
+	return spi->DR & 0xFFFF;
 }

@@ -12,18 +12,18 @@
 static void intercom_init_gpio(void);
 static void intercom_init_spi(void);
 
-static void intercom_spi1_handler(void);
-
 void intercom_init(void) {
 	intercom_init_gpio();
 	intercom_init_spi();
 }
 
 void intercom_transfer(void) {
-	static uint8_t index;
+	static uint8_t data = 0xAA;
+
+	printf("Data:%X\r\n", data);
 
 	gpio_write(GPIOA, 4, 0);
-	spi_send(SPI1, index++);
+	data = spi_xfer(SPI1, data);
 	gpio_write(GPIOA, 4, 1);
 }
 
@@ -40,10 +40,10 @@ static void intercom_init_gpio(void) {
 	gpio_set_output_type(GPIOA, 6, GPIO_OUTPUT_PP);
 	gpio_set_output_type(GPIOA, 7, GPIO_OUTPUT_PP);
 
-	gpio_set_output_speed(GPIOA, 4, GPIO_SPEED_LOW);
-	gpio_set_output_speed(GPIOA, 5, GPIO_SPEED_HIGH);
-	gpio_set_output_speed(GPIOA, 6, GPIO_SPEED_HIGH);
-	gpio_set_output_speed(GPIOA, 7, GPIO_SPEED_HIGH);
+	gpio_set_output_speed(GPIOA, 4, GPIO_SPEED_HIGH);
+	gpio_set_output_speed(GPIOA, 5, GPIO_SPEED_VERY_HIGH);
+	gpio_set_output_speed(GPIOA, 6, GPIO_SPEED_VERY_HIGH);
+	gpio_set_output_speed(GPIOA, 7, GPIO_SPEED_VERY_HIGH);
 
 	gpio_set_pull(GPIOA, 4, GPIO_PULL_NONE);
 	gpio_set_pull(GPIOA, 5, GPIO_PULL_NONE);
@@ -68,15 +68,5 @@ static void intercom_init_spi(void) {
 	spi_set_frame_format(SPI1, SPI_FRAME_FORMAT_LSBFIRST);
 	spi_set_frame_size(SPI1, SPI_FRAME_SIZE_8);
 
-	vectors_register_isr(NVIC_SPI1_IRQ, intercom_spi1_handler);
-	vectors_enable_irq(NVIC_SPI1_IRQ);
-
-	spi_enable_rx_interrupt(SPI1);
 	spi_enable(SPI1);
-}
-
-static void intercom_spi1_handler(void) {
-	if (SPI1->SR & SPI_SR_RXNE) {
-		printf("Received:%X\r\n", (uint8_t)(SPI1->DR & 0xFF));
-	}
 }
