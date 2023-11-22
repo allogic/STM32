@@ -1,6 +1,7 @@
 #ifndef STM32F4_HAL_USART_H
 #define STM32F4_HAL_USART_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include <hal/registers.h>
@@ -52,8 +53,14 @@ void usart_enable_rx_interrupt(usart_t* usart);
 void usart_disable_tx_interrupt(usart_t* usart);
 void usart_disable_rx_interrupt(usart_t* usart);
 
+bool usart_tx_buffer_empty(usart_t* usart);
+bool usart_rx_buffer_empty(usart_t* usart);
+
 void usart_enable(usart_t* usart);
 void usart_disable(usart_t* usart);
+
+void usart_write(usart_t* usart, uint8_t data);
+uint8_t usart_read(usart_t* usart);
 
 void usart_send(usart_t* usart, uint8_t data);
 uint8_t usart_recv(usart_t* usart);

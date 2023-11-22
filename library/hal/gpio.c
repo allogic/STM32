@@ -25,8 +25,8 @@ void gpio_set_af(gpio_t* gpio, uint32_t pin, uint8_t af) {
 		gpio->AFRL &= ~(0xF << (4 * pin));
 		gpio->AFRL |= af << (4 * pin);
 	} else {
-		gpio->AFRH &= ~(0xF << (4 * pin));
-		gpio->AFRH |= af << (4 * pin);
+		gpio->AFRH &= ~(0xF << (4 * (pin - 8)));
+		gpio->AFRH |= af << (4 * (pin - 8));
 	}
 }
 

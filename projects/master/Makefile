@@ -35,6 +35,7 @@ GDBFLAGS += --eval-command="set print pretty on"
 GDBFLAGS += --eval-command="set print array on"
 
 LIB_SRCS += $(wildcard $(LIB_DIR)/*.c)
+LIB_SRCS += $(wildcard $(LIB_DIR)/container/*.c)
 LIB_SRCS += $(wildcard $(LIB_DIR)/hal/*.c)
 
 PRO_SRCS += $(wildcard $(PRO_DIR)/*.c)

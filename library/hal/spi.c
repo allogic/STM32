@@ -83,6 +83,14 @@ void spi_disable_rx_interrupt(spi_t* spi) {
 	spi->CR2 &= ~SPI_CR2_RXNEIE;
 }
 
+bool spi_tx_buffer_empty(spi_t* spi) {
+	return (spi->SR & SPI_SR_TXE) == SPI_SR_TXE;
+}
+
+bool spi_rx_buffer_empty(spi_t* spi) {
+	return (spi->SR & SPI_SR_RXNE) != SPI_SR_RXNE;
+}
+
 void spi_enable_crc(spi_t* spi) {
 	spi->CR1 |= SPI_CR1_CRCEN;
 }

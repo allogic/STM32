@@ -1,3 +1,4 @@
+#include <hal/peripherals.h>
 #include <hal/usart.h>
 
 #include <clock.h>
@@ -5,7 +6,11 @@
 void usart_set_baudrate(usart_t* usart, uint32_t baud) {
 	uint32_t clock = clock_get_usart_clk_freq(usart);
 
-	usart->BRR = (clock + (baud / 2)) / baud;
+	if (usart == USART1) {
+		usart->BRR = (clock / baud) * 256 + ((clock % baud) * 256 + baud / 2) / baud;
+	} else {
+		usart->BRR = (clock + (baud / 2)) / baud;
+	}
 }
 
 void usart_set_databits(usart_t* usart, uint32_t bits) {
@@ -47,12 +52,28 @@ void usart_disable_rx_interrupt(usart_t* usart) {
 	usart->CR1 &= ~USART_CR1_RXNEIE;
 }
 
+bool usart_tx_buffer_empty(usart_t* usart) {
+	return (usart->SR & USART_SR_TXE) == USART_SR_TXE;
+}
+
+bool usart_rx_buffer_empty(usart_t* usart) {
+	return (usart->SR & USART_SR_RXNE) != USART_SR_RXNE;
+}
+
 void usart_enable(usart_t* usart) {
 	usart->CR1 |= USART_CR1_UE;
 }
 
 void usart_disable(usart_t* usart) {
 	usart->CR1 &= ~USART_CR1_UE;
+}
+
+void usart_write(usart_t* usart, uint8_t data) {
+	usart->DR = data;
+}
+
+uint8_t usart_read(usart_t* usart) {
+	return usart->DR;
 }
 
 void usart_send(usart_t* usart, uint8_t data) {

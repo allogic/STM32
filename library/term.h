@@ -38,6 +38,7 @@
 #define TERM_CTRL_RS  (30)
 #define TERM_CTRL_US  (31)
 
+#define TERM_CHAR_QUEUE_SIZE  (32)
 #define TERM_LINE_BUFFER_SIZE (32)
 #define TERM_ARG_BUFFER_SIZE  (32)
 
@@ -73,6 +74,6 @@ typedef struct {
 } cmd_t;
 
 void term_init(void);
-void term_print(const char* format, ...);
+void term_update(void);
 
 #endif

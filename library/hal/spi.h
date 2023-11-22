@@ -1,6 +1,7 @@
 #ifndef STM32F4_HAL_SPI_H
 #define STM32F4_HAL_SPI_H
 
+#include <stdbool.h>
 #include <stdint.h>
 
 #include <hal/registers.h>
@@ -94,6 +95,9 @@ void spi_enable_rx_interrupt(spi_t* spi);
 
 void spi_disable_tx_interrupt(spi_t* spi);
 void spi_disable_rx_interrupt(spi_t* spi);
+
+bool spi_tx_buffer_empty(spi_t* spi);
+bool spi_rx_buffer_empty(spi_t* spi);
 
 void spi_enable_crc(spi_t* spi);
 void spi_disable_crc(spi_t* spi);

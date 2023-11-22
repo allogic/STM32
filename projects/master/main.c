@@ -42,14 +42,32 @@ int main(void) {
 	printf("Hello I am the master device\r\n");
 
 	while (1) {
-		gpio_write(GPIOD, 12, !gpio_read(GPIOD, 12));
-		gpio_write(GPIOD, 13, !gpio_read(GPIOD, 13));
-		gpio_write(GPIOD, 14, !gpio_read(GPIOD, 14));
-		gpio_write(GPIOD, 15, !gpio_read(GPIOD, 15));
+		//gpio_write(GPIOD, 12, !gpio_read(GPIOD, 12));
+		//gpio_write(GPIOD, 13, !gpio_read(GPIOD, 13));
+		//gpio_write(GPIOD, 14, !gpio_read(GPIOD, 14));
+		//gpio_write(GPIOD, 15, !gpio_read(GPIOD, 15));
 
-		delay_ms(1000);
+		//delay_ms(1000);
 
-		intercom_transfer();
+		term_update();
+
+		uint32_t x;
+		intercom_read(0, 0, &x);
+		printf("0 = 0 = %u\r\n", x);
+
+		uint32_t y;
+		intercom_read(0, 1, &y);
+		printf("0 = 1 = %u\r\n", y);
+
+		char z[32];
+		memset(z, 0, sizeof(z));
+		intercom_read(0, 2, z);
+		printf("0 = 2 = %s\r\n", z);
+
+		char w[32];
+		memset(w, 0, sizeof(w));
+		intercom_read(0, 3, w);
+		printf("0 = 3 = %s\r\n", w);
 	}
 
 	return 0;

@@ -1,5 +1,7 @@
 #include <core/attributes.h>
 
+#include <container/queue.h>
+
 #include <hal/registers.h>
 #include <hal/peripherals.h>
 #include <hal/usart.h>
@@ -12,20 +14,24 @@
 
 static uint32_t s_line_length;
 
+static ALIGN(4) uint8_t s_char_buffer[TERM_CHAR_QUEUE_SIZE];
+
+static queue_t s_char_queue;
+
 static ALIGN(4) uint8_t s_line_buffer[TERM_LINE_BUFFER_SIZE];
 static ALIGN(4) uint8_t s_arg_buffer[TERM_ARG_BUFFER_SIZE];
 
 static void term_init_gpio(void);
 static void term_init_usart(void);
 
-static bool term_byte_is_ctrl_code(uint8_t byte);
-static bool term_byte_is_printable(uint8_t byte);
+static bool term_data_is_ctrl_code(uint8_t data);
+static bool term_data_is_printable(uint8_t data);
 
 static void term_handle_return(void);
 static void term_handle_backspace(void);
-static void term_handle_print(uint8_t byte);
+static void term_handle_print(uint8_t data);
 
-static void term_handle_byte(uint8_t byte);
+static void term_handle_data(uint8_t data);
 static void term_exec_buffer(void);
 
 static void term_usart2_handler(void);
@@ -35,8 +41,20 @@ void _putchar(char byte) {
 }
 
 void term_init(void) {
+	queue_init(&s_char_queue, sizeof(uint8_t), TERM_CHAR_QUEUE_SIZE, sizeof(s_char_buffer), s_char_buffer);
+
 	term_init_gpio();
 	term_init_usart();
+}
+
+void term_update(void) {
+	while (!queue_empty(&s_char_queue)) {
+		uint8_t data;
+
+		queue_pop(&s_char_queue, &data);
+
+		term_handle_data(data);
+	}
 }
 
 static void term_init_gpio(void) {
@@ -65,12 +83,12 @@ static void term_init_usart(void) {
 	usart_enable(USART2);
 }
 
-static bool term_byte_is_ctrl_code(uint8_t byte) {
-	return byte < ' ';
+static bool term_data_is_ctrl_code(uint8_t data) {
+	return data < ' ';
 }
 
-static bool term_byte_is_printable(uint8_t byte) {
-	return (byte >= ' ') && (byte <= '~');
+static bool term_data_is_printable(uint8_t data) {
+	return (data >= ' ') && (data <= '~');
 }
 
 static void term_handle_return(void) {
@@ -89,23 +107,23 @@ static void term_handle_backspace(void) {
 	}
 }
 
-static void term_handle_print(uint8_t byte) {
+static void term_handle_print(uint8_t data) {
 	if (s_line_length < (TERM_LINE_BUFFER_SIZE - 1)) {
-		s_line_buffer[s_line_length++] = byte;
+		s_line_buffer[s_line_length++] = data;
 
-		printf("%c", byte);
+		printf("%c", data);
 	}
 }
 
-static void term_handle_byte(uint8_t byte) {
-	if (term_byte_is_ctrl_code(byte)) {
-		if (byte == TERM_CTRL_CR) {
+static void term_handle_data(uint8_t data) {
+	if (term_data_is_ctrl_code(data)) {
+		if (data == TERM_CTRL_CR) {
 			term_handle_return();
-		} else if (byte == TERM_CTRL_BS) {
+		} else if (data == TERM_CTRL_BS) {
 			term_handle_backspace();
 		}
-	} else if (term_byte_is_printable(byte)) {
-		term_handle_print(byte);
+	} else if (term_data_is_printable(data)) {
+		term_handle_print(data);
 	}
 }
 
@@ -114,7 +132,9 @@ static void term_exec_buffer(void) {
 }
 
 static void term_usart2_handler(void) {
-	if (USART2->SR & USART_SR_RXNE) {
-		term_handle_byte(USART2->DR & 0xFF);
+	if (!usart_rx_buffer_empty(USART2)) {
+		uint8_t data = usart_read(USART2);
+
+		queue_push(&s_char_queue, &data);
 	}
 }

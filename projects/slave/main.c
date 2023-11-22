@@ -42,14 +42,14 @@ int main(void) {
 	printf("Hello I am the slave device\r\n");
 
 	while (1) {
-		gpio_write(GPIOD, 12, !gpio_read(GPIOD, 12));
-		gpio_write(GPIOD, 13, !gpio_read(GPIOD, 13));
-		gpio_write(GPIOD, 14, !gpio_read(GPIOD, 14));
-		gpio_write(GPIOD, 15, !gpio_read(GPIOD, 15));
+		//gpio_write(GPIOD, 12, !gpio_read(GPIOD, 12));
+		//gpio_write(GPIOD, 13, !gpio_read(GPIOD, 13));
+		//gpio_write(GPIOD, 14, !gpio_read(GPIOD, 14));
+		//gpio_write(GPIOD, 15, !gpio_read(GPIOD, 15));
 
-		delay_ms(1000);
+		//delay_ms(1000);
 
-		intercom_transfer();
+		term_update();
 	}
 
 	return 0;
